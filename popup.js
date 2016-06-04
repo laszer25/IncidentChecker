@@ -3,18 +3,32 @@ document.addEventListener('DOMContentLoaded', function() {
   startTrackingButton.addEventListener('click', function() {
 
     chrome.tabs.getSelected(null, function(tab) {
-      d = document;
-      console.log(d);
-      var f = d.createElement('form');
-      f.action = 'http://gtmetrix.com/analyze.html?bm';
-      f.method = 'post';
-      var i = d.createElement('input');
-      i.type = 'hidden';
-      i.name = 'url';
-      i.value = tab.url;
-      f.appendChild(i);
-      d.body.appendChild(f);
-      f.submit();
+      
+      chrome.tabs.sendMessage(tab.id, {text: 'report_back'}, function(response) {
+        
+        doAwesomeStuffWithTheResponse(response, tab);
+      });      
     });
   }, false);
 }, false);
+
+function doAwesomeStuffWithTheResponse (response, tab) {
+  var options = {
+    type: "basic",
+    title: "New Incident",
+    message: "A new incident has been added to the queue",
+    iconUrl: "icon.png",
+    priority: 2,
+    requireInteraction: true
+  }
+  console.log(chrome);
+  chrome.notifications.create(options, function (notificationId) {
+    console.log(notificationId);
+  });
+  setTimeout(function() {
+    console.log("Reloading  ");
+    chrome.tabs.reload(tab.id, function (){
+      console.log("Reloaded");
+    })
+  }, 20000);
+}

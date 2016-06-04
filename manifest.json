@@ -9,7 +9,20 @@
    "default_icon": "icon.png",
    "default_popup": "popup.html"
   },
+  "background" : {
+    "persistent": false,
+    "scripts": ["background.js"]    
+  },
+  "content_scripts": [
+      { 
+          "matches": ["http://*/*",
+            "https://*/*"],
+          "js": ["content.js"],
+          "run_at": "document_end"
+      }
+  ],
   "permissions": [
-   "activeTab"
+   "activeTab",
+   "notifications"
    ]
 }
