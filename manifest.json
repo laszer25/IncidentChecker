@@ -10,19 +10,20 @@
    "default_popup": "popup.html"
   },
   "background" : {
-    "persistent": false,
+    "persistent": true,
     "scripts": ["background.js"]    
   },
   "content_scripts": [
       { 
           "matches": ["http://*/*",
-            "https://*/*"],
+            "https://*/*", "<all_urls>"],
           "js": ["content.js"],
           "run_at": "document_end"
       }
   ],
   "permissions": [
    "activeTab",
-   "notifications"
+   "notifications",
+   "background"
    ]
 }
