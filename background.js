@@ -28,12 +28,14 @@ Array.prototype.equals = function (array) {
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 var incidents = [];
+var tracking  = false;
 
 function doAwesomeStuffWithTheResponse (response, tab) {
   console.log("doing awesome stuff with the response");
+  tracking = true;
   var options = {
     type: "basic",
-    title: "New Incident",
+    title: "Kitty Alert",
     message: "A new incident has been added to the queue",
     iconUrl: "icon.png",
     priority: 2,
@@ -66,4 +68,8 @@ function doAwesomeStuffWithTheResponse (response, tab) {
       console.log("Reloaded");
     })
   }, 10000);
+}
+
+function isTracking() {
+    return tracking;
 }

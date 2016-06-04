@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var startTrackingButton = document.getElementById('startTracking');
   startTrackingButton.addEventListener('click', function() {
     console.log("clicked");
+    startTrackingButton.innerText = "Tracking...meow..meow"
     chrome.tabs.getSelected(null, function(tab) {
       
       chrome.tabs.sendMessage(tab.id, {text: 'report_back'}, function(response) {
