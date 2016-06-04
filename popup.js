@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
       
       chrome.tabs.sendMessage(tab.id, {text: 'report_back'}, function(response) {
         console.log("response received")
-        console.log(response)
         bgPage.doAwesomeStuffWithTheResponse(response, tab);
       });      
     });
@@ -23,3 +22,11 @@ window.onload = function() {
     startTrackingButton.disabled = true
   }
 }
+
+chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+  var refreshText = document.getElementById("refreshCounter");
+  
+  if (msg.text === "timer_cnt") {
+    refreshText.innerText = "Refreshing in " + msg.time + " seconds.";
+  }
+});

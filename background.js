@@ -29,9 +29,13 @@ Array.prototype.equals = function (array) {
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 var incidents = [];
 var tracking  = false;
+var notified = true;
 
 function doAwesomeStuffWithTheResponse (response, tab) {
   console.log("doing awesome stuff with the response");
+  if (tracking == false) {
+      audioNotification();
+  }
   tracking = true;
   var options = {
     type: "basic",
@@ -43,7 +47,6 @@ function doAwesomeStuffWithTheResponse (response, tab) {
   }
   //Figure out the list of all matching incidents
   //(IT|it)00[0-9]+
-  console.log(response)
   if (response != undefined) {
     var newIncidents = response.match(/(IT|it)00[0-9]+/g)
     if (incidents.length != 0) {
@@ -52,14 +55,21 @@ function doAwesomeStuffWithTheResponse (response, tab) {
         console.log("There has been a change in the incident numbers");
         chrome.notifications.create(options, function (notificationId) {
         console.log(notificationId);
+        notified = false;
         });  
       }
     }
     incidents = newIncidents;  
   }
-  
+  var itvlCtr = 59;
+  var timerInterval = setInterval(function() {
+    chrome.runtime.sendMessage({text: "timer_cnt", time: itvlCtr});
+    itvlCtr -= 1;
+  }, 1000)
   setTimeout(function() {
-    console.log("Reloading  ");
+    console.log("Reloading");
+    itvlCtr = 0;
+    clearInterval(timerInterval);
     chrome.tabs.reload(tab.id, function (){
       chrome.tabs.sendMessage(tab.id, {text: 'report_back'}, function(response) {
         console.log("Inside the refresh loop")
@@ -67,9 +77,23 @@ function doAwesomeStuffWithTheResponse (response, tab) {
       });
       console.log("Reloaded");
     })
-  }, 10000);
+  }, 60000);
+  
 }
 
 function isTracking() {
     return tracking;
 }
+
+function audioNotification() {
+    var notificationSound = new Audio("clicking.mp3");
+    setInterval(function() {
+        if (!notified) {
+            notificationSound.play();    
+        }
+    }, 5000);
+}
+
+chrome.notifications.onClosed.addListener(function (notificationId, byUser) {
+    notified = true;
+})
