@@ -49,7 +49,7 @@ function doAwesomeStuffWithTheResponse (response, tab) {
   //(IT|it)00[0-9]+
   if (response != undefined) {
     var newIncidents = response.match(/(IT|it)00[0-9]+/g)
-    if (incidents.length != 0) {
+    if ( incidents && incidents.length != 0) {
       console.log("incidents length is over 0")
       if (!incidents.equals(newIncidents)) {
         console.log("There has been a change in the incident numbers");
@@ -58,6 +58,9 @@ function doAwesomeStuffWithTheResponse (response, tab) {
         notified = false;
         });  
       }
+    }
+    else {
+        incidents = [];
     }
     incidents = newIncidents;  
   }
