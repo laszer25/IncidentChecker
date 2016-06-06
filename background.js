@@ -48,7 +48,7 @@ function doAwesomeStuffWithTheResponse (response, tab) {
   //Figure out the list of all matching incidents
   //(IT|it)00[0-9]+
   if (response != undefined) {
-    var newIncidents = response.match(/(IT|it)00[0-9]+/g)
+    var newIncidents = response.match(/^(IT|it)00[0-9]+$/gm)
     if ( incidents && incidents.length != 0) {
       console.log("incidents length is over 0")
       if (!incidents.equals(newIncidents)) {
@@ -64,6 +64,13 @@ function doAwesomeStuffWithTheResponse (response, tab) {
     }
     incidents = newIncidents;  
   }
+  else {
+      chrome.tabs.sendMessage(tab.id, {text: 'report_back'}, function(response) {
+            console.log("Inside the refresh loop")
+            doAwesomeStuffWithTheResponse(response, tab);
+       });
+      return;
+  }
   var itvlCtr = 59;
   var timerInterval = setInterval(function() {
     chrome.runtime.sendMessage({text: "timer_cnt", time: itvlCtr});
@@ -74,10 +81,10 @@ function doAwesomeStuffWithTheResponse (response, tab) {
     itvlCtr = 0;
     clearInterval(timerInterval);
     chrome.tabs.reload(tab.id, function (){
-      chrome.tabs.sendMessage(tab.id, {text: 'report_back'}, function(response) {
-        console.log("Inside the refresh loop")
-        doAwesomeStuffWithTheResponse(response, tab);
-      });
+        chrome.tabs.sendMessage(tab.id, {text: 'report_back'}, function(response) {
+            console.log("Inside the refresh loop")
+            doAwesomeStuffWithTheResponse(response, tab);
+        });  
       console.log("Reloaded");
     })
   }, 60000);
